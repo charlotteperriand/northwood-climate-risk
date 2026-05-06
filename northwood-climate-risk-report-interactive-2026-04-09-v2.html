@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Northwood Capital — Climate Risk Report (Interactive)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#0F1815;
+  --paper-2:#18221E;
+  --paper-3:#1F2B26;
+  --ink:#EDE5D2;
+  --ink-2:#C8C2B0;
+  --muted:#8A9085;
+  --rule:#2A352F;
+  --rule-2:#384540;
+  --accent:#D8714A;
+  --accent-2:#B0573A;
+  --olive:#7BA158;
+  --teal:#5B9B9D;
+  --slate:#8A9AA5;
+  --warn:#E0A95A;
+  --green:#5DAE68;
+  --green-deep:#3D6E45;
+  --red:#D86A55;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--paper);color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;letter-spacing:-0.005em}
+.num,.cap,.lbl,.crumb,.btn-back,.tag,.k-lbl,.k-sub,th,.axis,.annot-num{font-family:'Inter',-apple-system,sans-serif;font-feature-settings:'tnum';font-variant-numeric:tabular-nums}
+a{color:inherit;text-decoration:none}
+
+/* ---------- HEADER / BREADCRUMB ---------- */
+.top{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--rule)}
+.top-inner{max-width:1100px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;gap:18px}
+.brand{font-family:'Inter',sans-serif;font-weight:700;font-size:14px;letter-spacing:0.02em;color:var(--ink)}
+.brand i{font-style:italic;font-weight:400;color:var(--muted)}
+.crumb{font-size:11px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;flex:1}
+.crumb b{color:var(--ink);font-weight:600}
+.crumb .sep{color:var(--rule);margin:0 8px}
+.btn-back{font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent);cursor:pointer;border:none;background:none;padding:4px 8px;font-weight:600}
+.btn-back:hover{text-decoration:underline}
+.btn-back.hide{visibility:hidden}
+
+/* ---------- PAGE SYSTEM ---------- */
+main{max-width:1100px;margin:0 auto;padding:0 32px}
+.page{display:none;padding:48px 0 80px;animation:fade .35s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- TYPOGRAPHY ---------- */
+.eyebrow{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:14px}
+h1.cover-h{font-size:62px;line-height:1.02;font-weight:700;letter-spacing:-0.035em;margin-bottom:24px;max-width:900px}
+h1.cover-h em{font-style:italic;font-weight:300;color:var(--accent);letter-spacing:-0.02em}
+h1.page-h{font-size:40px;line-height:1.08;font-weight:700;letter-spacing:-0.028em;margin-bottom:14px;max-width:760px}
+h1.page-h em{font-style:italic;font-weight:300;letter-spacing:-0.015em}
+h2.section-h{font-size:22px;font-weight:600;letter-spacing:-0.018em;margin:36px 0 14px;max-width:680px}
+h3.mini-h{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px}
+.lede{font-size:19px;line-height:1.5;color:var(--ink-2);max-width:720px;margin-bottom:20px;font-weight:400;letter-spacing:-0.01em}
+.lede em{font-style:italic;color:var(--accent);font-weight:500}
+p{max-width:680px;margin-bottom:14px;color:var(--ink-2);font-weight:400}
+p.wide{max-width:880px}
+p .num{font-weight:600;color:var(--ink)}
+p em{font-style:italic;color:var(--ink);font-weight:500}
+ul.notes{list-style:none;margin:14px 0 14px 0;max-width:680px}
+ul.notes li{padding:6px 0 6px 18px;border-bottom:1px solid var(--rule);position:relative;color:var(--ink-2)}
+ul.notes li::before{content:"›";position:absolute;left:0;top:6px;color:var(--accent);font-weight:700}
+ul.notes li:last-child{border-bottom:none}
+.byline{font-family:'Inter',sans-serif;font-size:12px;color:var(--muted);letter-spacing:0.04em;margin-bottom:36px}
+.byline span{color:var(--ink);font-weight:600}
+
+/* ---------- COVER ---------- */
+.cover-rule{height:1px;background:var(--rule);margin:8px 0 32px;max-width:140px}
+.cover-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:40px 0 48px;border-top:1px solid var(--rule-2);border-bottom:1px solid var(--rule-2);background:var(--paper-2)}
+.cover-stat{padding:20px 24px 22px;border-right:1px solid var(--rule)}
+.cover-stat:last-child{border-right:none}
+.cover-stat .k-lbl{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px}
+.cover-stat .k-val{font-family:'Inter',sans-serif;font-size:30px;font-weight:700;letter-spacing:-0.03em;color:var(--ink);line-height:1}
+.cover-stat .k-sub{font-size:11px;color:var(--muted);margin-top:6px}
+
+/* ---------- INDEX (book-style TOC) ---------- */
+.index{margin-top:56px}
+.index-title{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.24em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:0;padding-bottom:14px;border-bottom:1px solid var(--rule-2)}
+.index-section{font-family:'Inter',sans-serif;font-size:13px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-2);font-weight:600;padding:32px 0 10px;border-bottom:1px solid var(--rule)}
+.index-section .is-roman{font-style:italic;font-weight:400;color:var(--accent);margin-right:12px;font-family:'Inter',sans-serif;letter-spacing:0}
+.ie{display:grid;grid-template-columns:64px 1fr 40px;align-items:center;gap:20px;padding:20px 4px 20px 0;border-bottom:1px solid var(--rule);cursor:pointer;transition:padding-left .18s ease, background-color .18s}
+.ie:hover{padding-left:12px;background:linear-gradient(to right, var(--paper-2) 0%, transparent 60%)}
+.ie:last-child{border-bottom:1px solid var(--rule-2)}
+.ie-num{font-family:'Inter',sans-serif;font-size:32px;font-weight:200;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.04em}
+.ie:hover .ie-num{color:var(--green)}
+.ie-body h4{font-family:'Inter',sans-serif;font-size:19px;font-weight:600;color:var(--ink);margin-bottom:5px;letter-spacing:-0.018em;line-height:1.25}
+.ie-body h4 em{font-style:italic;font-weight:300}
+.ie-body p{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--muted);margin:0;max-width:none;line-height:1.5;letter-spacing:0.01em}
+.ie-arrow{font-family:'Inter',sans-serif;font-size:20px;color:var(--muted);text-align:right;transition:transform .22s ease, color .18s;font-weight:300}
+.ie:hover .ie-arrow{transform:translateX(6px);color:var(--accent)}
+
+/* ---------- LAYER 1 (DOOR) PAGES ---------- */
+.subdive-list{display:grid;grid-template-columns:1fr;gap:1px;background:var(--rule);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-top:32px}
+.subdive{background:var(--paper-2);padding:24px 28px;cursor:pointer;display:grid;grid-template-columns:60px 1fr 100px;gap:20px;align-items:center;transition:background .15s}
+.subdive:hover{background:var(--paper-3)}
+.subdive .sd-num{font-family:'Inter',sans-serif;font-size:34px;font-weight:300;color:var(--accent);line-height:1}
+.subdive .sd-body h4{font-family:'Inter',sans-serif;font-size:20px;font-weight:600;color:var(--ink);margin-bottom:4px;letter-spacing:-0.005em}
+.subdive .sd-body h4 em{font-style:italic;font-weight:400}
+.subdive .sd-body p{font-size:14px;color:var(--muted);margin:0;max-width:none}
+.subdive .sd-arrow{font-family:'Inter',sans-serif;font-size:11px;color:var(--accent);text-align:right;letter-spacing:0.1em;text-transform:uppercase;font-weight:600}
+
+/* ---------- DEEP-DIVE LAYOUT ---------- */
+.dd-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;margin-top:24px;align-items:start}
+.dd-grid.flip{grid-template-columns:1fr 1.1fr}
+.dd-full{margin-top:24px}
+.chart-card{background:var(--paper);padding:8px 0 12px}
+.chart-cap{font-family:'Inter',sans-serif;font-size:11px;color:var(--muted);letter-spacing:0.04em;margin-top:10px;padding-top:8px;border-top:1px solid var(--rule-2);max-width:100%}
+.chart-cap b{color:var(--ink);font-weight:600}
+.dd-meta{display:flex;gap:24px;font-family:'Inter',sans-serif;font-size:11px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin:18px 0 28px;padding-bottom:14px;border-bottom:1px solid var(--rule)}
+.dd-meta b{color:var(--ink);font-weight:600;letter-spacing:0}
+
+/* ---------- CALLOUTS ---------- */
+.callout{border-left:3px solid var(--accent);padding:14px 18px;background:var(--paper-2);border-top:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:24px 0;max-width:680px;border-radius:0 3px 3px 0}
+.callout .c-lbl{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+.callout p{margin:0;color:var(--ink);font-size:16px;max-width:none}
+.callout.warn{border-left-color:var(--warn)}
+.callout.warn .c-lbl{color:var(--warn)}
+.callout.green{border-left-color:var(--green)}
+.callout.green .c-lbl{color:var(--green)}
+.callout.red{border-left-color:var(--red)}
+.callout.red .c-lbl{color:var(--red)}
+
+/* ---------- TABLES ---------- */
+table.editorial{border-collapse:collapse;width:100%;margin:18px 0;font-family:'Inter',sans-serif;font-size:13px}
+table.editorial th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--ink);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+table.editorial th.n{text-align:right}
+table.editorial td{padding:9px 10px;border-bottom:1px solid var(--rule);color:var(--ink-2)}
+table.editorial td.n{text-align:right;font-variant-numeric:tabular-nums}
+table.editorial td b{color:var(--ink);font-weight:600}
+table.editorial tr:hover td{background:var(--paper-3)}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:2px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
+.tag.crit{background:#3A1F1A;color:#E89882}
+.tag.high{background:#3A2D1A;color:#E5BC78}
+.tag.med{background:#1F2A33;color:#9FB5C5}
+.tag.low{background:#1F2A1E;color:#A8C088}
+.tag.real{background:#1A3525;color:#85C895}
+
+/* ---------- KPI ROW IN DEEP DIVES ---------- */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:18px 0 24px;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule-2);background:var(--paper-2)}
+.kpi-row.c4{grid-template-columns:repeat(4,1fr)}
+.kpi-row .kp{padding:14px 16px;border-right:1px solid var(--rule)}
+.kpi-row .kp:last-child{border-right:none}
+.kpi-row .k-lbl{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:4px}
+.kpi-row .k-val{font-family:'Inter',sans-serif;font-size:24px;font-weight:700;color:var(--ink);line-height:1.1;letter-spacing:-0.025em}
+.kpi-row .k-val.accent{color:var(--accent)}
+.kpi-row .k-sub{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* ---------- SVG CHART STYLING ---------- */
+svg{display:block;max-width:100%;height:auto}
+svg .axis-line{stroke:var(--ink-2);stroke-width:1}
+svg .grid{stroke:var(--rule-2);stroke-width:0.5;stroke-dasharray:2,3}
+svg text{font-family:'Inter',sans-serif;fill:var(--ink-2)}
+svg .axis{font-size:10px;fill:var(--muted)}
+svg .annot{font-family:'Inter',sans-serif;font-size:12px;fill:var(--ink);font-style:italic}
+svg .annot-num{font-size:11px;font-weight:600;fill:var(--ink)}
+svg .lbl-bold{font-size:11px;font-weight:600;fill:var(--ink)}
+svg .dot{transition:all .15s}
+svg .dot:hover{filter:brightness(1.1)}
+
+/* ---------- FOOTER ---------- */
+footer{border-top:1px solid var(--rule);margin-top:80px;padding:36px 0 60px;background:var(--paper)}
+.foot-inner{max-width:1100px;margin:0 auto;padding:0 32px;display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start}
+.foot-col{flex:1;min-width:200px}
+.foot-col h5{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink);font-weight:700;margin-bottom:10px}
+.foot-col p,.foot-col li{font-size:13px;color:var(--muted);line-height:1.55;font-family:'Inter',sans-serif;margin-bottom:6px;list-style:none}
+.foot-col p{max-width:none;margin-bottom:6px}
+
+@media print{
+  .top{position:static;border:none}
+  .btn-back,.crumb{display:none}
+  .page{display:block!important;page-break-after:always;animation:none}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<!-- ====================== TOP / BREADCRUMB ====================== -->
+<div class="top">
+  <div class="top-inner">
+    <div class="brand">Nil Sensu <i>· Northwood Capital (demo) · dark edition</i></div>
+    <div class="crumb" id="crumb"><b>Cover</b></div>
+    <button class="btn-back hide" id="back" onclick="back()">← Back</button>
+  </div>
+</div>
+
+<main>
+
+<!-- ====================== COVER (Layer 0) ====================== -->
+<section class="page active" id="cover">
+  <div class="eyebrow">Climate Risk Report · Q2 2026 Operating Review</div>
+  <h1 class="cover-h">Five risks. <em>Four companies.</em> $8.9M a year.</h1>
+  <div class="cover-rule"></div>
+  <p class="lede">Northwood Capital's ten portfolio companies generate <span class="num">$1.7 billion</span> of revenue and <span class="num">23,032</span> metric tons of direct emissions. The risks attached to those emissions — transitional, physical, regulatory — sum to <em>$8.9 million per year</em> of unhedged exposure, concentrated in just five issues across four portfolio companies: Keystone, Harvest Ridge, NovaCare, and Sterling.</p>
+  <p class="wide">None of them are existential. All of them are addressable inside the current hold period. What follows is a guided tour of what they are, what we'd do, and what we still don't know — twelve entries, organized into four sections. Pick any.</p>
+
+  <div class="cover-stats">
+    <div class="cover-stat"><div class="k-lbl">At Risk</div><div class="k-val">$8.9M</div><div class="k-sub">per year, top 5 risks</div></div>
+    <div class="cover-stat"><div class="k-lbl">Operational NPV</div><div class="k-val">$779,617</div><div class="k-sub">10 initiatives, 5-yr hold</div></div>
+    <div class="cover-stat"><div class="k-lbl">Scope 1+2</div><div class="k-val">23,032</div><div class="k-sub">mt CO₂e, FY2025</div></div>
+    <div class="cover-stat"><div class="k-lbl">Scope 3 (est.)</div><div class="k-val">297,120</div><div class="k-sub">mt CO₂e, ~12.9× larger</div></div>
+  </div>
+
+  <div class="index">
+    <div class="index-title">Contents</div>
+
+    <div class="index-section"><span class="is-roman">I.</span>Where the money is</div>
+    <div class="ie" onclick="go('d-sterling')">
+      <div class="ie-num">01</div>
+      <div class="ie-body">
+        <h4>The slow-motion tax that hits at <em>exit</em></h4>
+        <p>Sterling Precision · CBAM phase-in 2026–2034 · $244,975 in 2030, $524,362 at full phase</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+    <div class="ie" onclick="go('d-keystone')">
+      <div class="ie-num">02</div>
+      <div class="ie-body">
+        <h4>A <em>$5.9M haircut</em> waiting at the closing table</h4>
+        <p>Keystone Behavioral Health · ESG-screening probability across five buyer types · 134× ROI on the gap-closure</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+    <div class="ie" onclick="go('d-water')">
+      <div class="ie-num">03</div>
+      <div class="ie-body">
+        <h4>We were wrong about Murfreesboro by a factor of <em>two and a half</em></h4>
+        <p>Harvest Ridge Foods · Real WRI Aqueduct data revises one facility from "Low-Medium" to "High" stress</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+
+    <div class="index-section"><span class="is-roman">II.</span>What's most likely</div>
+    <div class="ie" onclick="go('d-matrix')">
+      <div class="ie-num">04</div>
+      <div class="ie-body">
+        <h4>Fifteen risks, four quadrants, <em>one</em> priority list</h4>
+        <p>Materiality matrix · annotated dot plot with uncertainty whiskers · five risks in "Mitigate Now"</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+    <div class="ie" onclick="go('d-novacare')">
+      <div class="ie-num">05</div>
+      <div class="ie-body">
+        <h4>The only Mitigate-Now risk we <em>can't</em> directly price</h4>
+        <p>NovaCare Health Partners · clinical staff shortage · 65% probability, $720,000/yr</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+    <div class="ie" onclick="go('d-scope3')">
+      <div class="ie-num">06</div>
+      <div class="ie-body">
+        <h4>Their carbon problem is becoming <em>our customers' carbon problem</em></h4>
+        <p>Portfolio Scope 3 · USEEIO spend-based estimate of 297,120 mt · 12.9× Scope 1+2</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+
+    <div class="index-section"><span class="is-roman">III.</span>What we'd do</div>
+    <div class="ie" onclick="go('d-initiatives')">
+      <div class="ie-num">07</div>
+      <div class="ie-body">
+        <h4>$3.3 million of capex against $779,617 of <em>NPV</em></h4>
+        <p>The ten operational initiatives · capex bars vs NPV markers · seven positive, three negative-but-justified</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+    <div class="ie" onclick="go('d-murfreesboro')">
+      <div class="ie-num">08</div>
+      <div class="ie-body">
+        <h4>A new initiative born from a single <em>API call</em></h4>
+        <p>Murfreesboro water resilience · $220,000 capex, $105,250 NPV · entered the plan after the Aqueduct fetch</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+    <div class="ie" onclick="go('d-timeline')">
+      <div class="ie-num">09</div>
+      <div class="ie-body">
+        <h4><em>Six quarters</em> to get the critical work done</h4>
+        <p>Implementation timeline · Q2 2026 through Q3 2027 · the first critical-priority initiative starts this quarter</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+
+    <div class="index-section"><span class="is-roman">IV.</span>What we don't know</div>
+    <div class="ie" onclick="go('d-gaps')">
+      <div class="ie-num">10</div>
+      <div class="ie-body">
+        <h4><em>Two questions</em> we need answered before Week 5</h4>
+        <p>Data gap inventory · 8 gaps total · 2 Critical, 3 High · the rest are tractable</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+    <div class="ie" onclick="go('d-methodology')">
+      <div class="ie-num">11</div>
+      <div class="ie-body">
+        <h4>How we got from <em>facility CSVs</em> to dollar figures</h4>
+        <p>Methodology · WRI Aqueduct, EPA USEEIO, CBAM phase-in · four data quality classifications</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+    <div class="ie" onclick="go('d-evolution')">
+      <div class="ie-num">12</div>
+      <div class="ie-body">
+        <h4>What changes when the data <em>gets better</em></h4>
+        <p>v1 → v4 evolution · the Murfreesboro reveal · how a single API call rewrote one risk profile</p>
+      </div>
+      <div class="ie-arrow">→</div>
+    </div>
+  </div>
+
+  <p class="byline" style="margin-top:56px">Nil Sensu · 2026-04-09 · <span>Northwood Capital, Q2 Operating Review</span> · v4 underlying data · 4 primary external sources · <em style="color:var(--accent)">demonstration project, fictional client</em></p>
+</section>
+
+<!-- ====================== 01 STERLING CBAM ====================== -->
+<section class="page" id="d-sterling">
+  <div class="eyebrow">Deep Dive 01 · Sterling Precision Manufacturing</div>
+  <h1 class="page-h">The slow-motion tax that hits at <em>exit</em></h1>
+  <div class="dd-meta"><span><b>Risk:</b> CBAM phase-in</span><span><b>Probability:</b> 90%</span><span><b>$/yr at full phase:</b> $524,362</span><span><b>Quadrant:</b> Mitigate Now</span></div>
+
+  <p>The European Union's Carbon Border Adjustment Mechanism is not a question of whether — it is a question of when, and at what rate. The mechanism phases in linearly between 2026 and 2034, applying a price (denominated in EU ETS allowances) to the embedded carbon of imported steel, aluminium, cement, fertiliser, and a handful of other goods.</p>
+
+  <p>Sterling Precision Manufacturing exports approximately <em>30% of its output to EU customers</em> — that figure is the most consequential unverified number in this report, which is why the chart below shows it as a range, not a point. At a 30% share, the CBAM cost in 2030 is $244,975. At full phase-in in 2034, it reaches $524,362 — roughly 1.74% of EBITDA in that year.</p>
+
+  <h2 class="section-h">Sensitivity to EU export share</h2>
+  <div class="chart-card"><div id="chart-tornado"></div><div class="chart-cap"><b>Five-year hold-period CBAM cost</b> at five EU-export-share assumptions. The 30% case is base. Each step up or down changes the hold-period cost by roughly $168,000.</div></div>
+
+  <div class="callout warn">
+    <div class="c-lbl">Assumption — Critical</div>
+    <p>Sterling's EU export share is a <em>firm estimate</em>. We have it from Sterling's commercial deck, not from a verified shipping ledger. A range of 10–50% is plausible; the model output swings 5×.</p>
+  </div>
+
+  <h2 class="section-h">Cost trajectory across phase-in</h2>
+  <div class="chart-card"><div id="chart-cbam-trajectory"></div><div class="chart-cap"><b>Year-by-year CBAM cost at three EU-share assumptions.</b> The shape is the same — quadratic-ish — because CBAM phases in linearly while EU ETS prices rise. The level is what shifts.</div></div>
+
+  <div class="callout green">
+    <div class="c-lbl">Recommended action</div>
+    <p>Commission a 30-day product-by-product carbon footprint study at Sterling. Cost: low five figures, scoped against three vendors. Output: a verified bill-of-materials in CO₂ terms, which collapses the model uncertainty and creates a basis for procurement substitution.</p>
+  </div>
+</section>
+
+<!-- ====================== 02 KEYSTONE EXIT ====================== -->
+<section class="page" id="d-keystone">
+  <div class="eyebrow">Deep Dive 02 · Keystone Behavioral Health</div>
+  <h1 class="page-h">A $5.9 million haircut waiting at the <em>closing table</em></h1>
+  <div class="dd-meta"><span><b>Risk:</b> ESG exit multiple discount</span><span><b>Probability:</b> 55%</span><span><b>Expected EV impact:</b> -$5.9M</span><span><b>Quadrant:</b> Mitigate Now</span></div>
+
+  <p>Keystone is the single largest dollar exposure in this report, and it is structurally different from every other risk: it is a <em>one-time event at exit</em>, not an annual cash-flow leak. It belongs in the report because the magnitude makes it impossible to ignore — but the framing matters. We are not modelling foregone EBITDA; we are modelling the buyer's willingness to pay.</p>
+
+  <p>The current portfolio company carbon intensity at Keystone is <span class="num">7.3 mt/$M revenue</span>. A reasonable target — informed by other healthcare-services platforms in our pipeline review, though not from a published benchmark we can cite — is roughly <span class="num">5.0 mt/$M</span>. The gap is small in absolute terms (about <span class="num">317 mt/yr</span> at this revenue base), but the multiple-impact at exit is sensitive to which buyer the deal team takes the company to.</p>
+
+  <h2 class="section-h">Buyer-type scenarios</h2>
+  <div class="chart-card"><div id="chart-waterfall"></div><div class="chart-cap"><b>From base-case enterprise value to probability-weighted EV.</b> Each bar is one buyer scenario weighted by its probability. The ESG-First Buyer case is small in probability (5%) but large in impact (-1.0× multiple).</div></div>
+
+  <div class="callout">
+    <div class="c-lbl">The math is asymmetric</div>
+    <p>Probability-weighted EV impact: <em>-$5.9M</em>. Cost to close the intensity gap: <em>$44,436</em> (LED retrofits, HVAC controls, two facility audits). Implied ROI on the gap-closure work: <em>134×</em>.</p>
+  </div>
+
+  <p>This calculation rests on probabilities the deal team supplied verbally; we have not validated them against transaction data. The Keystone exit timeline is roughly 24–30 months out, which means the gap-closure capex must be deployed in the next two quarters to have time to produce two clean reporting periods before the auction begins.</p>
+
+  <div class="callout green">
+    <div class="c-lbl">Recommended action</div>
+    <p>Approve the $44,436 efficiency package this quarter. Treat it as a valuation hedge, not an operating initiative — the IRR framing understates its purpose.</p>
+  </div>
+</section>
+
+<!-- ====================== 03 HARVEST RIDGE WATER ====================== -->
+<section class="page" id="d-water">
+  <div class="eyebrow">Deep Dive 03 · Harvest Ridge Foods</div>
+  <h1 class="page-h">We were wrong about Murfreesboro by a factor of <em>two and a half</em></h1>
+  <div class="dd-meta"><span><b>Source:</b> WRI Aqueduct 4.0</span><span><b>Method:</b> CARTO SQL API</span><span><b>Status:</b> <span class="tag real">Hard Data</span></span></div>
+
+  <p>The original Harvest Ridge water analysis used <em>simulated</em> stress indices for each of the five facilities — values seeded from regional averages. The simulated number for HRF-002 in Murfreesboro, Tennessee was <span class="num">1.4</span>, classified as Low-Medium. The actual value, fetched from the World Resources Institute's Aqueduct 4.0 dataset using a PostGIS spatial join against the HydroSHEDS basin layer, is <span class="num">3.51</span> — High.</p>
+
+  <p>The Stones River sub-basin, which serves Murfreesboro, has a withdrawal-to-supply ratio of 40–80%. This is consistent with the city's documented periodic curtailment events. The simulation got it wrong because regional averages smoothed over a sub-basin that is much more stressed than its surroundings.</p>
+
+  <h2 class="section-h">Five facilities, simulated vs actual</h2>
+  <div class="chart-card"><div id="chart-slope"></div><div class="chart-cap"><b>Each line is a Harvest Ridge facility.</b> Four of the five tracked close to the simulation. Murfreesboro did not. The +2.11 delta is the largest data-quality correction in the report.</div></div>
+
+  <div class="callout red">
+    <div class="c-lbl">The finding that changed the plan</div>
+    <p>This single API call added a new <em>"Mitigate Now"</em>–adjacent risk worth $850,000/yr in expected value, and prompted a new $220,000 capex initiative (Murfreesboro water resilience). Both are now in the recommended plan.</p>
+  </div>
+
+  <h2 class="section-h">All five facilities in tabular form</h2>
+  <table class="editorial">
+    <thead><tr><th>Facility</th><th>City</th><th class="n">Aqueduct</th><th class="n">Simulated</th><th class="n">Δ</th><th>Class</th></tr></thead>
+    <tbody>
+      <tr><td><b>HRF-001</b></td><td>Nashville, TN</td><td class="n">1.12</td><td class="n">1.30</td><td class="n">−0.18</td><td>Low-Medium</td></tr>
+      <tr><td><b>HRF-002</b></td><td>Murfreesboro, TN</td><td class="n"><b>3.51</b></td><td class="n">1.40</td><td class="n" style="color:var(--accent);font-weight:700">+2.11</td><td><span class="tag crit">High</span></td></tr>
+      <tr><td><b>HRF-003</b></td><td>Bowling Green, KY</td><td class="n">2.08</td><td class="n">2.30</td><td class="n">−0.22</td><td>Medium-High</td></tr>
+      <tr><td><b>HRF-004</b></td><td>Chattanooga, TN</td><td class="n">0.31</td><td class="n">0.90</td><td class="n">−0.59</td><td>Low</td></tr>
+      <tr><td><b>HRF-005</b></td><td>Nashville, TN</td><td class="n">1.12</td><td class="n">1.30</td><td class="n">−0.18</td><td>Low-Medium</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====================== 04 MATERIALITY MATRIX ====================== -->
+<section class="page" id="d-matrix">
+  <div class="eyebrow">Deep Dive 04 · Materiality</div>
+  <h1 class="page-h">Fifteen risks, four quadrants, <em>one priority list</em></h1>
+  <div class="dd-meta"><span><b>Total risks:</b> 15</span><span><b>Mitigate Now:</b> 5</span><span><b>$ at risk (top quadrant):</b> $8.9M/yr</span><span><b>Categories:</b> 5</span></div>
+
+  <p>The materiality matrix is the single chart we'd put in front of a Managing Partner if she had thirty seconds. It plots every named risk in the portfolio on two axes — probability of occurrence (horizontal) and annual dollar impact (vertical, log scale) — and uses the four quadrants to suggest a default response.</p>
+
+  <p>Five risks land in the upper-right "Mitigate Now" quadrant — high probability and high impact. They sum to <span class="num">$8.9M/yr</span> and represent the focus of the rest of this report. Three more risks are in "Hedge / Insure" — low probability but very high impact, where the right tool is insurance or contractual transfer rather than direct mitigation.</p>
+
+  <div class="chart-card"><div id="chart-matrix"></div><div class="chart-cap"><b>Each dot is one named risk.</b> Size encodes dollar impact. Whiskers show our probability range — wider whiskers mean less confidence in the central estimate. Colors encode risk category (transition, physical, social, governance, regulatory).</div></div>
+
+  <div class="callout">
+    <div class="c-lbl">How to read this</div>
+    <p>Top-right quadrant: act now. Top-left: hedge or insure. Bottom-right: monitor and revisit quarterly. Bottom-left: deprioritize until something changes. The quadrant lines are at 30% probability and $500,000/yr impact — drawn for editorial clarity, not regulatory definition.</p>
+  </div>
+</section>
+
+<!-- ====================== 05 NOVACARE STAFFING ====================== -->
+<section class="page" id="d-novacare">
+  <div class="eyebrow">Deep Dive 05 · NovaCare Health Partners</div>
+  <h1 class="page-h">The only Mitigate-Now risk we <em>can't directly price</em></h1>
+  <div class="dd-meta"><span><b>Risk:</b> Clinical staff shortage</span><span><b>Probability:</b> 65%</span><span><b>$/yr:</b> $720,000</span><span><b>Quadrant:</b> Mitigate Now</span></div>
+
+  <p>Four of the five risks in our top quadrant have a clean financial mechanism: regulatory fee, exit multiple, customer requirement, asset damage. NovaCare's clinical staffing risk is the exception. The number — <span class="num">$720,000/yr</span> — is a planning estimate based on overtime premiums, agency-staff markups, and the lost-margin cost of unfilled shifts at NovaCare's <span class="num">30 facilities</span>. It is not a contractual cash flow.</p>
+
+  <p>This matters for two reasons. First, the lever is not directly ours. Hiring decisions, retention programs, and clinical compensation belong to NovaCare's operating team and HR function. Second, the climate connection is indirect: increasing summer heat and humidity in NovaCare's southeastern footprint plausibly correlates with both higher patient volume and elevated staff burnout — a relationship we have inferred from anecdotal portco reporting, not from a primary dataset, and which we would want to validate before acting on.</p>
+
+  <h2 class="section-h">What can be priced, and what can't</h2>
+  <div class="kpi-row">
+    <div class="kp"><div class="k-lbl">Annual exposure</div><div class="k-val">$720K</div><div class="k-sub">overtime + agency + lost margin</div></div>
+    <div class="kp"><div class="k-lbl">Probability range</div><div class="k-val">50–80%</div><div class="k-sub">central estimate 65%</div></div>
+    <div class="kp"><div class="k-lbl">Direct levers in our control</div><div class="k-val accent">0</div><div class="k-sub">all action via portco</div></div>
+  </div>
+
+  <div class="callout warn">
+    <div class="c-lbl">Recommended action</div>
+    <p>Add to the standing portco operating-review agenda for Q3 2026. The ask of NovaCare's CEO is not "do something climate-related" — it is "share your retention KPIs by facility, and let us help benchmark against the regional comparable set." That is the only credible move from our seat.</p>
+  </div>
+
+  <p>This deep dive is short because honesty demands it. Some risks belong on the priority list because they are real and large, even when our ability to act on them directly is constrained. Listing them anyway is more useful than pretending we have a plan we don't.</p>
+</section>
+
+<!-- ====================== 06 SCOPE 3 CUSTOMER REQUIREMENT ====================== -->
+<section class="page" id="d-scope3">
+  <div class="eyebrow">Deep Dive 06 · Portfolio-wide Scope 3</div>
+  <h1 class="page-h">Their carbon problem is becoming <em>our customers' carbon problem</em></h1>
+  <div class="dd-meta"><span><b>Method:</b> EPA USEEIO 2.0 spend-based</span><span><b>Total Scope 3:</b> 297,120 mt</span><span><b>S3 / S1+2 ratio:</b> 12.9×</span><span><b>Status:</b> <span class="tag high">Benchmark</span></span></div>
+
+  <p>Scope 3 — emissions from a portfolio company's supply chain, not its own facilities — is, in aggregate, <em>12.9 times larger</em> than the directly-measured Scope 1 and 2 footprint. We did not measure these numbers; we estimated them using EPA's USEEIO model, which assigns sector-level emissions intensities (mt CO₂e per $M revenue) to seven NAICS-mapped portco categories.</p>
+
+  <p>The estimate matters because at least one portfolio company — Harvest Ridge Foods — has a <span class="num">$34M annual contract</span> with a national grocery customer that has signalled it will require Scope 3 disclosure from suppliers starting in 2027. That is a 60% probability event with $680,000/yr in expected value (lost margin if the contract is renegotiated downward).</p>
+
+  <h2 class="section-h">Where the supply-chain emissions live</h2>
+  <div class="chart-card"><div id="chart-treemap"></div><div class="chart-cap"><b>Each rectangle is one portfolio company, sized by estimated Scope 3 emissions.</b> Harvest Ridge dominates because food and agriculture have the highest USEEIO factor (420 mt/$M). Sterling is second because of steel inputs.</div></div>
+
+  <div class="callout">
+    <div class="c-lbl">Methodological honesty</div>
+    <p>USEEIO factors are <em>sector averages</em>, not supplier-specific measurements. Real Scope 3 for a given portco can vary 10–50× from the sector average depending on supplier mix. These numbers are useful for LP conversations and order-of-magnitude planning. They are not useful for compliance or contractual disclosure.</p>
+  </div>
+
+  <h2 class="section-h">Top six contributors</h2>
+  <table class="editorial">
+    <thead><tr><th>Company</th><th>Sector</th><th class="n">Revenue</th><th class="n">Factor</th><th class="n">Scope 3 (est.)</th><th class="n">Ratio</th></tr></thead>
+    <tbody>
+      <tr><td><b>Harvest Ridge Foods</b></td><td>Food & Ag</td><td class="n">$152M</td><td class="n">420</td><td class="n"><b>63,840</b></td><td class="n">12.4×</td></tr>
+      <tr><td><b>Sterling Precision</b></td><td>Industrial Tech</td><td class="n">$168M</td><td class="n">280</td><td class="n"><b>47,040</b></td><td class="n">9.8×</td></tr>
+      <tr><td><b>NovaCare Health</b></td><td>Healthcare</td><td class="n">$175M</td><td class="n">190</td><td class="n"><b>33,250</b></td><td class="n">18.1×</td></tr>
+      <tr><td><b>Pinnacle T&I</b></td><td>Industrial Tech</td><td class="n">$115M</td><td class="n">280</td><td class="n"><b>32,200</b></td><td class="n">12.8×</td></tr>
+      <tr><td><b>Clearview Env.</b></td><td>Env. Services</td><td class="n">$195M</td><td class="n">140</td><td class="n"><b>27,300</b></td><td class="n">9.1×</td></tr>
+      <tr><td><b>Patriot Staffing</b></td><td>Business Svcs</td><td class="n">$310M</td><td class="n">85</td><td class="n"><b>26,350</b></td><td class="n">15.0×</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====================== 07 INITIATIVE RANKING ====================== -->
+<section class="page" id="d-initiatives">
+  <div class="eyebrow">Deep Dive 07 · The recommended plan</div>
+  <h1 class="page-h">$3.3 million of capex against $779,617 of <em>NPV</em></h1>
+  <div class="dd-meta"><span><b>Initiatives:</b> 10</span><span><b>Total capex:</b> $3.27M</span><span><b>Total NPV:</b> $779,617</span><span><b>Discount rate:</b> 10%</span></div>
+
+  <p>The ten operational initiatives are ranked by net present value over a five-year hold at a 10% discount rate. Seven are NPV-positive on a strict cash-flow basis. Three are not — and they earn their place in the plan because they protect valuation at exit, not because they generate cash during the hold.</p>
+
+  <p>Two of the seven positive-NPV initiatives are flagged Critical: <em>Harvest Ridge flood mitigation</em> and <em>Harvest Ridge water recycling at Bowling Green</em>. Both reflect physical-risk exposure compounding faster than insurance escalation can absorb. The first kicks off this quarter (Q2 2026); the second follows in Q3.</p>
+
+  <h2 class="section-h">Capex versus NPV, ranked</h2>
+  <div class="chart-card"><div id="chart-bullets"></div><div class="chart-cap"><b>Each row is one initiative.</b> Gray bar = capex (left scale). Marker = NPV (right scale, right of the zero line is positive). Initiatives sorted by NPV descending.</div></div>
+
+  <div class="callout green">
+    <div class="c-lbl">The seven we'd approve this quarter</div>
+    <p>Harvest Ridge flood ($396K NPV); Sterling renewable PPA ($271K, zero capex); Harvest Ridge CIP recycling ($116K); Murfreesboro resilience ($105K); Trident cold-aisle ($79K); Harvest Ridge steam recovery ($52K); Pinnacle resilience assessment ($50K). Total NPV: <em>$1.07M</em>. Total capex: <em>$1.30M</em>.</p>
+  </div>
+
+  <div class="callout warn">
+    <div class="c-lbl">The three that need a separate conversation</div>
+    <p>Sterling process-heat electrification (-$3K NPV, but the cleanest demonstrable decarbonization story for an exit narrative); Harvest Ridge backup water at Bowling Green (-$136K NPV, but insurance against a $9M curtailment tail); Clearview fleet pilot (-$150K NPV, but signals to LPs and primes the larger fleet program). Approve as <em>strategic</em> capex with explicit non-cash justification.</p>
+  </div>
+</section>
+
+<!-- ====================== 08 MURFREESBORO RESILIENCE ====================== -->
+<section class="page" id="d-murfreesboro">
+  <div class="eyebrow">Deep Dive 08 · New initiative — Q3 2026</div>
+  <h1 class="page-h">A new initiative born from a single <em>API call</em></h1>
+  <div class="dd-meta"><span><b>Capex:</b> $220,000</span><span><b>Annual benefit:</b> $78,000</span><span><b>NPV:</b> $105,250</span><span><b>Start:</b> Q3 2026</span></div>
+
+  <p>This initiative did not exist in version 1, version 2, or version 3 of this analysis. It was added in version 4, after a single HTTP request to the WRI Aqueduct 4.0 dataset returned a water-stress score for HRF-002 Murfreesboro that was <em>2.5× higher</em> than the simulated value we had been working from.</p>
+
+  <p>The recommended package — total <span class="num">$220K</span> capex — combines three workstreams in indicative proportions: rainwater harvesting for non-potable use, a closed-loop cooling retrofit on the primary processing line, and a 12-month metering and analytics program to baseline actual consumption. The line-item split will be finalized once the facility audit is complete in Q2. The framing assumption is that Tennessee's withdrawal-permit framework tightens before exit; we do not yet have a probability we are willing to defend on that timeline.</p>
+
+  <h2 class="section-h">The five-year cash flow</h2>
+  <div class="kpi-row c4">
+    <div class="kp"><div class="k-lbl">Year 1 saving</div><div class="k-val">$78K</div></div>
+    <div class="kp"><div class="k-lbl">Payback</div><div class="k-val">2.8 yr</div></div>
+    <div class="kp"><div class="k-lbl">5-yr cumulative</div><div class="k-val">$390K</div></div>
+    <div class="kp"><div class="k-lbl">NPV @ 10%</div><div class="k-val accent">$105,250</div></div>
+  </div>
+
+  <p>The payback comparison is tighter than it appears on the surface. Without this initiative, the Murfreesboro facility carries an expected-value loss of <span class="num">$850,000/yr</span> from the new water-stress risk. The $220K capex therefore protects roughly <em>4× its cost</em> in addition to the cash savings — a calculation we deliberately did not embed in the NPV figure to keep the financial math conservative.</p>
+
+  <div class="callout">
+    <div class="c-lbl">What this entry says about our process</div>
+    <p>The simulated value (<span class="num">1.4</span>) was not unreasonable. It was based on regional averages. It just happened to be wrong for this specific sub-basin. The lesson is not that simulations are bad — it is that <em>real data, where available, is cheap insurance against expensive surprises</em>.</p>
+  </div>
+</section>
+
+<!-- ====================== 09 IMPLEMENTATION TIMELINE ====================== -->
+<section class="page" id="d-timeline">
+  <div class="eyebrow">Deep Dive 09 · Sequencing</div>
+  <h1 class="page-h"><em>Six quarters</em> to get the critical work done</h1>
+  <div class="dd-meta"><span><b>Span:</b> Q2 2026 → Q3 2027</span><span><b>Critical:</b> 2 initiatives</span><span><b>High:</b> 4 initiatives</span><span><b>Medium:</b> 4 initiatives</span></div>
+
+  <p>The sequencing is not arbitrary. Two constraints drive it: capex availability (no portco can absorb more than two simultaneous projects), and the dependency between baseline-establishing assessments (Pinnacle climate resilience, Harvest Ridge water metering) and the capex projects they inform.</p>
+
+  <p>The two Critical initiatives — Harvest Ridge flood mitigation, Harvest Ridge water recycling at Bowling Green — both kick off in Q2 and Q3 of 2026 respectively. Process-heat electrification at Sterling is the longest project (six quarters) and starts in Q1 2027 to give the bill-of-materials work time to land first.</p>
+
+  <h2 class="section-h">The schedule</h2>
+  <div class="chart-card"><div id="chart-gantt"></div><div class="chart-cap"><b>Each row is one initiative.</b> Bar color encodes priority — red for Critical, amber for High, slate for Medium. Width encodes duration in quarters. Two initiatives finish in 2026; the rest carry into 2027.</div></div>
+
+  <div class="callout">
+    <div class="c-lbl">The Q2 2026 ask</div>
+    <p>Approve three Q2 starts: Harvest Ridge flood mitigation ($380K), Pinnacle climate resilience assessment ($75K), and the Keystone valuation-protection efficiency package ($44K). Combined Q2 capex: <em>$499,000</em>. Combined Q2 NPV (operational only): <em>$446,000</em>.</p>
+  </div>
+</section>
+
+<!-- ====================== 10 CRITICAL GAPS ====================== -->
+<section class="page" id="d-gaps">
+  <div class="eyebrow">Deep Dive 10 · Data quality</div>
+  <h1 class="page-h">Two questions we need answered before <em>Week 5</em></h1>
+  <div class="dd-meta"><span><b>Total gaps:</b> 8</span><span><b>Critical:</b> 2</span><span><b>High:</b> 3</span><span><b>Medium / Low:</b> 3</span></div>
+
+  <p>An honest analysis names the things it does not know. Eight gaps are listed below, in priority order. Two are flagged Critical: both live at Sterling Precision and both feed the CBAM model — the single most sensitive number in this report.</p>
+
+  <h2 class="section-h">The full inventory</h2>
+  <table class="editorial">
+    <thead><tr><th>Portco</th><th>Data needed</th><th>Current proxy</th><th>Why it matters</th><th>Priority</th></tr></thead>
+    <tbody>
+      <tr><td><b>Sterling</b></td><td>EU export share (% of revenue)</td><td>30% (estimate)</td><td>CBAM model swings 3–6×</td><td><span class="tag crit">Critical</span></td></tr>
+      <tr><td><b>Sterling</b></td><td>Product bill of materials (CO₂)</td><td>8,500t (estimate)</td><td>Enables product-level CBAM</td><td><span class="tag crit">Critical</span></td></tr>
+      <tr><td><b>Harvest Ridge</b></td><td>Insurance declarations</td><td>$420K (estimate)</td><td>Insurance NPV accuracy</td><td><span class="tag high">High</span></td></tr>
+      <tr><td><b>Harvest Ridge</b></td><td>Water utility bills (12 mo)</td><td>All volumes simulated</td><td>Grounds water cost model</td><td><span class="tag high">High</span></td></tr>
+      <tr><td><b>All portcos</b></td><td>COGS by category</td><td>Sector-avg USEEIO factors</td><td>Scope 3 accuracy (10–50×)</td><td><span class="tag high">High</span></td></tr>
+      <tr><td><b>All portcos</b></td><td>Facility square footage</td><td>Sector estimates</td><td>Retrofit model accuracy</td><td><span class="tag med">Medium</span></td></tr>
+      <tr><td><b>Keystone</b></td><td>Buyer ESG screening prevalence</td><td>Probabilities invented</td><td>Exit multiple model</td><td><span class="tag med">Medium</span></td></tr>
+      <tr><td><b>All portcos</b></td><td>Fleet vehicle inventory</td><td>Only gallons from CSV</td><td>Fleet electrification scope</td><td><span class="tag low">Low</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <div class="c-lbl">The two Sterling asks</div>
+    <p>One thirty-minute call with Sterling's CFO closes the EU export share gap. One thirty-day product carbon footprint study — low five figures, scoped against three vendors — closes the bill-of-materials gap. Together these resolve the largest model uncertainty in the report.</p>
+  </div>
+
+  <p>The other six gaps are tractable at the portco level. We expect the High-priority items closed by Week 5; Medium by end of engagement; Low can stay open into the Phase 2 conversation.</p>
+</section>
+
+<!-- ====================== 11 METHODOLOGY ====================== -->
+<section class="page" id="d-methodology">
+  <div class="eyebrow">Deep Dive 11 · How the numbers were built</div>
+  <h1 class="page-h">How we got from <em>facility CSVs</em> to dollar figures</h1>
+  <div class="dd-meta"><span><b>Primary sources:</b> 4</span><span><b>Models:</b> 4</span><span><b>DCF horizon:</b> 5 yr</span><span><b>Discount rate:</b> 10%</span></div>
+
+  <p>Every figure in this report traces to one of four classifications, intentionally simple so that any reader can ask "where did this come from" and get an answer in one sentence.</p>
+
+  <h2 class="section-h">The four data classifications</h2>
+  <div class="kpi-row c4">
+    <div class="kp"><div class="k-lbl"><span class="tag real">Hard Data</span></div><div class="k-val" style="font-size:18px;line-height:1.2;margin-top:4px">From a verified external source</div><div class="k-sub">WRI Aqueduct, EPA, Supabase financials</div></div>
+    <div class="kp"><div class="k-lbl"><span class="tag high">Benchmark</span></div><div class="k-val" style="font-size:18px;line-height:1.2;margin-top:4px">Sector-level industry average</div><div class="k-sub">USEEIO Scope 3, ETS pricing</div></div>
+    <div class="kp"><div class="k-lbl"><span class="tag med">Firm Estimate</span></div><div class="k-val" style="font-size:18px;line-height:1.2;margin-top:4px">From portco verbal/decks, unverified</div><div class="k-sub">EU export share, insurance premiums</div></div>
+    <div class="kp"><div class="k-lbl"><span class="tag low">Simulated</span></div><div class="k-val" style="font-size:18px;line-height:1.2;margin-top:4px">Modelled from defaults</div><div class="k-sub">water volumes, sq footage</div></div>
+  </div>
+
+  <h2 class="section-h">The four models in the report</h2>
+  <table class="editorial">
+    <thead><tr><th>Model</th><th>Inputs</th><th>Output</th><th>Sensitivity</th></tr></thead>
+    <tbody>
+      <tr><td><b>CBAM phase-in</b></td><td>EU export share, embedded carbon, ETS price, phase-in schedule</td><td>$/yr cost 2026–2034</td><td>5× swing on EU share alone</td></tr>
+      <tr><td><b>Insurance escalation</b></td><td>Premium baseline, escalation rate, flood probability, loss given event</td><td>5-yr NPV vs no-action</td><td>flood probability 6–20%</td></tr>
+      <tr><td><b>Retrofit NPV</b></td><td>Facility kWh/therms, sector sq footage, energy price, hold period</td><td>Per-portco capex/savings/NPV</td><td>all negative at 10% DR</td></tr>
+      <tr><td><b>Exit multiple</b></td><td>Buyer-type probabilities, multiple adjustments, current EBITDA</td><td>Probability-weighted EV impact</td><td>buyer probabilities are invented</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="section-h">External data sources</h2>
+  <ul class="notes">
+    <li><b>WRI Aqueduct 4.0</b> — water stress indices via CARTO SQL API, PostGIS spatial join against HydroSHEDS basins. CC-BY-4.0.</li>
+    <li><b>EPA USEEIO 2.0</b> — sector-level Scope 3 emissions intensities (mt CO₂e per $M revenue). Public domain.</li>
+    <li><b>EU CBAM</b> — phase-in schedule and ETS pricing curve from EU Commission publication 2023/956.</li>
+    <li><b>Supabase</b> — live portfolio company financials (revenue, EBITDA, headcount). Read-only anon connection.</li>
+  </ul>
+</section>
+
+<!-- ====================== 12 v1→v4 EVOLUTION ====================== -->
+<section class="page" id="d-evolution">
+  <div class="eyebrow">Deep Dive 12 · Showing the work</div>
+  <h1 class="page-h">What changes when the data <em>gets better</em></h1>
+  <div class="dd-meta"><span><b>Versions:</b> 4</span><span><b>QA fixes (v2):</b> 6</span><span><b>Polish passes (v3):</b> 8</span><span><b>Real-data swaps (v4):</b> 4</span></div>
+
+  <p>This report is the fourth version of the underlying analysis. Each version was triggered by something specific — a QA finding, a stakeholder question, or the arrival of better data. The lineage matters because it shows the analysis is not a static artifact; it is a <em>moving estimate</em> that improves as more is known.</p>
+
+  <h2 class="section-h">The four versions</h2>
+  <table class="editorial">
+    <thead><tr><th>Version</th><th>Trigger</th><th>Headline change</th><th>What stayed the same</th></tr></thead>
+    <tbody>
+      <tr><td><b>v1</b></td><td>Initial Week 4 build</td><td>Unified dashboard with five deliverables (D1–D5) on one canvas</td><td>—</td></tr>
+      <tr><td><b>v2</b></td><td>Internal QA review (6 issues)</td><td>Confidence labels added, sector-specific carbon pricing, risk register expanded with Social/Governance/Regulatory categories</td><td>Headline numbers unchanged</td></tr>
+      <tr><td><b>v3</b></td><td>"Make it presentation-ready"</td><td>Executive summary, sensitivity tables, interactive matrix, data gap inventory, Gantt timeline, print CSS</td><td>Headline numbers unchanged</td></tr>
+      <tr><td><b>v4</b></td><td>"Replace simulated data with real where possible"</td><td>WRI Aqueduct fetch (Murfreesboro reveal), USEEIO Scope 3, four portco deep dives, live Supabase</td><td>4 of 5 Mitigate-Now risks unchanged</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="section-h">The single largest data correction across all four versions</h2>
+  <div class="chart-card"><div id="chart-evolution"></div><div class="chart-cap"><b>Murfreesboro water stress, simulated vs actual.</b> Three of four versions used the simulated value. Version 4's API call revealed the actual value and triggered a new initiative ($220K) and a new risk ($850K/yr expected value).</div></div>
+
+  <div class="callout green">
+    <div class="c-lbl">What this proves about the methodology</div>
+    <p>Three things. <em>One:</em> the framework was robust enough that better data slotted in without rebuilding. <em>Two:</em> the data-quality classification system flagged the simulated values as such, so no one was surprised when one of them was wrong. <em>Three:</em> the next investment in this analysis — closing the two Critical Sterling gaps — will produce a similar-magnitude improvement in CBAM accuracy.</p>
+  </div>
+
+  <p style="margin-top:32px;font-style:italic;color:var(--muted)">End of report. Return to the cover or browse the other deep dives via the back button above.</p>
+</section>
+
+</main>
+
+<!-- ====================== FOOTER ====================== -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-col">
+      <h5>Methodology</h5>
+      <p>Four classifications: Hard Data, Benchmark, Firm Estimate, Simulated. Every figure in this report traces to one. See Deep Dive 11.</p>
+    </div>
+    <div class="foot-col">
+      <h5>Data sources</h5>
+      <ul>
+        <li>WRI Aqueduct 4.0 (CC-BY-4.0)</li>
+        <li>EPA USEEIO 2.0 (public domain)</li>
+        <li>EU Commission 2023/956 (CBAM)</li>
+        <li>Supabase portfolio_companies (live)</li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>Limitations</h5>
+      <p>Two Critical data gaps remain. Both at Sterling Precision. Both feed the CBAM model. The single largest source of model uncertainty in this report.</p>
+    </div>
+    <div class="foot-col">
+      <h5>Authorship</h5>
+      <p>Nil Sensu · 2026-04-09 · v4 underlying data · demonstration project for portfolio purposes; Northwood Capital is a fictional client.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ====================== JAVASCRIPT ====================== -->
+<script>
+// -------- Navigation --------
+const NAMES = {
+  'cover':'Contents',
+  'd-sterling':'01 · Sterling CBAM','d-keystone':'02 · Keystone exit','d-water':'03 · Harvest Ridge water',
+  'd-matrix':'04 · Materiality matrix','d-novacare':'05 · NovaCare staffing','d-scope3':'06 · Scope 3',
+  'd-initiatives':'07 · Initiatives','d-murfreesboro':'08 · Murfreesboro','d-timeline':'09 · Timeline',
+  'd-gaps':'10 · Data gaps','d-methodology':'11 · Methodology','d-evolution':'12 · v1 → v4'
+};
+const SECTION = {
+  'd-sterling':'I. Where the money is','d-keystone':'I. Where the money is','d-water':'I. Where the money is',
+  'd-matrix':"II. What's most likely",'d-novacare':"II. What's most likely",'d-scope3':"II. What's most likely",
+  'd-initiatives':"III. What we'd do",'d-murfreesboro':"III. What we'd do",'d-timeline':"III. What we'd do",
+  'd-gaps':"IV. What we don't know",'d-methodology':"IV. What we don't know",'d-evolution':"IV. What we don't know"
+};
+let stack = ['cover'];
+function go(id){
+  if(id==='cover'){ stack=['cover']; }
+  else if(stack[stack.length-1]!==id){ stack.push(id); }
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  updateChrome();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function back(){
+  if(stack.length<2) return;
+  stack.pop();
+  const prev = stack[stack.length-1];
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(prev).classList.add('active');
+  updateChrome();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+// Keyboard: Esc / Backspace navigates back; Enter activates focused element
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape' || (e.key==='Backspace' && e.target===document.body)){
+    e.preventDefault(); back();
+  }
+});
+// Make all clickable .door and .subdive elements keyboard-accessible
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.querySelectorAll('.ie,.door,.subdive').forEach(el=>{
+    el.setAttribute('role','button');
+    el.setAttribute('tabindex','0');
+    el.addEventListener('keydown', e=>{
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); el.click(); }
+    });
+  });
+});
+function updateChrome(){
+  const cur = stack[stack.length-1];
+  const back = document.getElementById('back');
+  back.classList.toggle('hide', cur==='cover');
+  let crumb = '';
+  if(cur==='cover'){
+    crumb = '<b>Contents</b>';
+  } else {
+    const sec = SECTION[cur] || '';
+    crumb = '<a onclick="go(\'cover\')" style="cursor:pointer">Contents</a><span class="sep">›</span><span style="color:var(--muted)">'+sec+'</span><span class="sep">›</span><b>'+NAMES[cur]+'</b>';
+  }
+  document.getElementById('crumb').innerHTML = crumb;
+}
+
+// =================================================================
+// CHARTS — all inline SVG, no dependencies
+// =================================================================
+const C = {
+  paper:'#0F1815', paper2:'#18221E', paper3:'#1F2B26', ink:'#EDE5D2', ink2:'#C8C2B0',
+  muted:'#8A9085', rule:'#2A352F', accent:'#D8714A', accent2:'#B0573A',
+  olive:'#7BA158', teal:'#5B9B9D', slate:'#8A9AA5', warn:'#E0A95A',
+  green:'#5DAE68', greenDeep:'#3D6E45', red:'#D86A55'
+};
+
+function svg(w,h){
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" preserveAspectRatio="xMidYMid meet">`;
+}
+
+// -------- 1. MATERIALITY DOT PLOT --------
+function drawMatrix(){
+  const W=820, H=480, PL=70, PR=40, PT=30, PB=60;
+  const iw=W-PL-PR, ih=H-PT-PB;
+  const RISKS = [
+    {p:'Keystone',r:'ESG exit discount',cat:'T',prob:0.55,plo:0.35,phi:0.70,usd:5900000,q:'MN'},
+    {p:'Harvest Ridge',r:'Water cost esc.',cat:'T',prob:0.80,plo:0.65,phi:0.90,usd:1061000,q:'MN'},
+    {p:'NovaCare',r:'Staff shortage',cat:'S',prob:0.65,plo:0.50,phi:0.80,usd:720000,q:'MN'},
+    {p:'Harvest Ridge',r:'Scope 3 cust. req.',cat:'T',prob:0.60,plo:0.40,phi:0.75,usd:680000,q:'MN'},
+    {p:'Sterling',r:'CBAM 2034',cat:'T',prob:0.90,plo:0.85,phi:0.95,usd:524000,q:'MN'},
+    {p:'Harvest Ridge',r:'Water curtail (BG)',cat:'P',prob:0.15,plo:0.08,phi:0.25,usd:9120000,q:'HI'},
+    {p:'Trident',r:'Cyber breach',cat:'G',prob:0.15,plo:0.08,phi:0.25,usd:2400000,q:'HI'},
+    {p:'Harvest Ridge',r:'Flood damage',cat:'P',prob:0.12,plo:0.06,phi:0.20,usd:1800000,q:'HI'},
+    {p:'Harvest Ridge',r:'Murfreesboro stress',cat:'P',prob:0.25,plo:0.15,phi:0.40,usd:850000,q:'HI'},
+    {p:'Harvest Ridge',r:'Seasonal labor',cat:'S',prob:0.40,plo:0.25,phi:0.55,usd:380000,q:'AM'},
+    {p:'Portfolio',r:'SEC disclosure',cat:'R',prob:0.45,plo:0.30,phi:0.60,usd:350000,q:'AM'},
+    {p:'Sterling',r:'CBAM at exit',cat:'T',prob:0.85,plo:0.75,phi:0.90,usd:245000,q:'AM'},
+    {p:'Harvest Ridge',r:'Insurance esc.',cat:'P',prob:0.75,plo:0.60,phi:0.85,usd:195000,q:'AM'},
+    {p:'Clearview',r:'Carbon pricing',cat:'T',prob:0.25,plo:0.10,phi:0.40,usd:420344,q:'D'},
+    {p:'Pinnacle',r:'Physical risk',cat:'P',prob:0.20,plo:0.10,phi:0.35,usd:300000,q:'D'},
+  ];
+  const CC = {T:C.teal, P:C.accent, S:'#B58AB0', G:C.warn, R:C.olive};
+  const sx = p => PL + p*iw;
+  const sy = u => {
+    const lmin=Math.log10(100000), lmax=Math.log10(10000000);
+    const lu = Math.log10(Math.max(u,100000));
+    return PT + ih - ((lu-lmin)/(lmax-lmin))*ih;
+  };
+  let s = svg(W,H);
+  // background quadrants
+  const xMid = sx(0.30), yMid = sy(500000);
+  s += `<rect x="${PL}" y="${PT}" width="${xMid-PL}" height="${yMid-PT}" fill="#3A2D1A" opacity="0.35"/>`;
+  s += `<rect x="${xMid}" y="${PT}" width="${PL+iw-xMid}" height="${yMid-PT}" fill="#3A1F1A" opacity="0.55"/>`;
+  s += `<rect x="${PL}" y="${yMid}" width="${xMid-PL}" height="${PT+ih-yMid}" fill="${C.paper3}" opacity="0.5"/>`;
+  s += `<rect x="${xMid}" y="${yMid}" width="${PL+iw-xMid}" height="${PT+ih-yMid}" fill="#1F2A33" opacity="0.4"/>`;
+  // quadrant labels
+  s += `<text x="${PL+10}" y="${PT+18}" class="annot" fill="#E5BC78" font-weight="700">Hedge / Insure</text>`;
+  s += `<text x="${PL+iw-10}" y="${PT+18}" class="annot" text-anchor="end" fill="#E89882" font-weight="700">Mitigate Now</text>`;
+  s += `<text x="${PL+10}" y="${PT+ih-10}" class="annot" fill="${C.muted}" font-weight="700">Deprioritize</text>`;
+  s += `<text x="${PL+iw-10}" y="${PT+ih-10}" class="annot" text-anchor="end" fill="#9FB5C5" font-weight="700">Accept &amp; Monitor</text>`;
+  // axes
+  s += `<line x1="${PL}" y1="${PT+ih}" x2="${PL+iw}" y2="${PT+ih}" class="axis-line"/>`;
+  s += `<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+ih}" class="axis-line"/>`;
+  // dashed quadrant dividers
+  s += `<line x1="${xMid}" y1="${PT}" x2="${xMid}" y2="${PT+ih}" class="grid"/>`;
+  s += `<line x1="${PL}" y1="${yMid}" x2="${PL+iw}" y2="${yMid}" class="grid"/>`;
+  // x ticks
+  [0,0.25,0.50,0.75,1].forEach(t=>{
+    s += `<text x="${sx(t)}" y="${PT+ih+18}" class="axis" text-anchor="middle">${(t*100)|0}%</text>`;
+  });
+  s += `<text x="${PL+iw/2}" y="${H-12}" class="axis" text-anchor="middle" font-weight="600">Probability →</text>`;
+  // y ticks (log)
+  [100000,500000,1000000,5000000,10000000].forEach(v=>{
+    const y = sy(v);
+    const lab = v>=1000000? '$'+(v/1000000)+'M' : '$'+(v/1000)+'K';
+    s += `<text x="${PL-8}" y="${y+3}" class="axis" text-anchor="end">${lab}</text>`;
+    s += `<line x1="${PL}" y1="${y}" x2="${PL+iw}" y2="${y}" class="grid"/>`;
+  });
+  s += `<text x="${PL-50}" y="${PT+ih/2}" class="axis" text-anchor="middle" font-weight="600" transform="rotate(-90,${PL-50},${PT+ih/2})">Annual $ impact (log) →</text>`;
+  // dots
+  RISKS.forEach(r => {
+    const cx = sx(r.prob), cy = sy(r.usd);
+    const lx = sx(r.plo), hx = sx(r.phi);
+    const rad = Math.max(5, Math.min(18, 5 + Math.sqrt(r.usd/100000)));
+    const col = CC[r.cat];
+    // whisker
+    s += `<line x1="${lx}" y1="${cy}" x2="${hx}" y2="${cy}" stroke="${col}" stroke-opacity="0.35" stroke-width="2.5" stroke-linecap="round"/>`;
+    s += `<line x1="${lx}" y1="${cy-3}" x2="${lx}" y2="${cy+3}" stroke="${col}" stroke-opacity="0.5" stroke-width="1.5"/>`;
+    s += `<line x1="${hx}" y1="${cy-3}" x2="${hx}" y2="${cy+3}" stroke="${col}" stroke-opacity="0.5" stroke-width="1.5"/>`;
+    // dot
+    s += `<circle class="dot" cx="${cx}" cy="${cy}" r="${rad}" fill="${col}" fill-opacity="0.78" stroke="${C.paper}" stroke-width="2"/>`;
+    // label for big dots
+    if(r.usd >= 500000){
+      const above = cy > PT+30;
+      const ly = above ? cy-rad-5 : cy+rad+12;
+      s += `<text x="${cx}" y="${ly}" class="lbl-bold" text-anchor="middle">${r.p}</text>`;
+    }
+  });
+  // legend
+  s += `<g transform="translate(${PL},${H-32})">`;
+  const cats = [['T','Transition'],['P','Physical'],['S','Social'],['G','Governance'],['R','Regulatory']];
+  cats.forEach((c,i)=>{
+    s += `<circle cx="${i*120+8}" cy="0" r="5" fill="${CC[c[0]]}"/>`;
+    s += `<text x="${i*120+18}" y="3" class="axis">${c[1]}</text>`;
+  });
+  s += '</g>';
+  s += '</svg>';
+  document.getElementById('chart-matrix').innerHTML = s;
+}
+
+// -------- 2. TORNADO CHART (Sterling CBAM sensitivity) --------
+function drawTornado(){
+  const W=720, H=320, PL=110, PR=80, PT=30, PB=40;
+  const iw=W-PL-PR, ih=H-PT-PB;
+  const data = [
+    {label:'10% EU export',cost:167822},
+    {label:'20% EU export',cost:335647},
+    {label:'30% (base case)',cost:503469,base:true},
+    {label:'40% EU export',cost:671292},
+    {label:'50% EU export',cost:839115},
+  ];
+  const max = 900000;
+  const sx = v => PL + (v/max)*iw;
+  const bh = 32, gap = 12;
+  let s = svg(W,H);
+  s += `<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+ih}" class="axis-line"/>`;
+  // x ticks
+  [0,250000,500000,750000].forEach(v=>{
+    const x = sx(v);
+    s += `<line x1="${x}" y1="${PT}" x2="${x}" y2="${PT+ih}" class="grid"/>`;
+    s += `<text x="${x}" y="${PT+ih+18}" class="axis" text-anchor="middle">$${(v/1000)|0}K</text>`;
+  });
+  s += `<text x="${PL+iw/2}" y="${H-8}" class="axis" text-anchor="middle" font-weight="600">5-year hold-period CBAM cost →</text>`;
+  data.forEach((d,i)=>{
+    const y = PT + i*(bh+gap) + 8;
+    const w = sx(d.cost) - PL;
+    const col = d.base ? C.accent : (d.cost > 503469 ? C.red : C.olive);
+    s += `<rect x="${PL}" y="${y}" width="${w}" height="${bh}" fill="${col}" fill-opacity="${d.base?0.85:0.6}" rx="2"/>`;
+    s += `<text x="${PL-10}" y="${y+bh/2+4}" class="axis" text-anchor="end" font-weight="${d.base?700:500}" fill="${d.base?C.ink:C.ink2}">${d.label}</text>`;
+    s += `<text x="${PL+w+8}" y="${y+bh/2+4}" class="annot-num" fill="${C.ink}">$${d.cost.toLocaleString()}</text>`;
+  });
+  s += '</svg>';
+  document.getElementById('chart-tornado').innerHTML = s;
+}
+
+// -------- 3. CBAM TRAJECTORY (small multiples) --------
+function drawCbamTraj(){
+  const W=820, H=240, gap=20;
+  const panelW = (W - gap*2)/3;
+  const PT=30, PB=42;
+  const ih = H-PT-PB;
+  const years = [2026,2027,2028,2029,2030,2031,2032,2033,2034];
+  const phase = {2026:0.025,2027:0.10,2028:0.225,2029:0.40,2030:0.575,2031:0.75,2032:0.875,2033:0.95,2034:1.0};
+  const ets = {2026:75,2027:85,2028:100,2029:115,2030:130,2031:140,2032:150,2033:155,2034:160};
+  const eurUsd = 1.08;
+  const calc = share => years.map(y => 8500*share*0.85*1.4*ets[y]*phase[y]*eurUsd);
+  const shares = [{label:'10% EU share',v:0.10,col:C.olive},{label:'30% (base)',v:0.30,col:C.accent},{label:'50% EU share',v:0.50,col:C.red}];
+  const allMax = Math.max(...shares.flatMap(sh => calc(sh.v)));
+  let s = svg(W,H);
+  shares.forEach((sh,pi)=>{
+    const x0 = pi*(panelW+gap);
+    const series = calc(sh.v);
+    const sx = i => x0 + 30 + (i/(years.length-1))*(panelW-50);
+    const sy = v => PT + ih - (v/allMax)*ih;
+    // axis baseline
+    s += `<line x1="${x0+30}" y1="${PT+ih}" x2="${x0+panelW-20}" y2="${PT+ih}" class="axis-line"/>`;
+    // path
+    let path = '';
+    series.forEach((v,i)=>{ path += (i===0?'M':'L')+sx(i)+','+sy(v); });
+    // area
+    let area = path + `L${sx(years.length-1)},${PT+ih} L${sx(0)},${PT+ih} Z`;
+    s += `<path d="${area}" fill="${sh.col}" fill-opacity="0.12"/>`;
+    s += `<path d="${path}" fill="none" stroke="${sh.col}" stroke-width="2"/>`;
+    // dots
+    series.forEach((v,i)=>{
+      s += `<circle cx="${sx(i)}" cy="${sy(v)}" r="2.5" fill="${sh.col}"/>`;
+    });
+    // year labels
+    [2026,2030,2034].forEach(y=>{
+      const i = years.indexOf(y);
+      s += `<text x="${sx(i)}" y="${PT+ih+15}" class="axis" text-anchor="middle">${y}</text>`;
+    });
+    // end value annotation
+    const lastV = series[series.length-1];
+    s += `<text x="${sx(years.length-1)+4}" y="${sy(lastV)+4}" class="annot-num" fill="${sh.col}">$${(lastV/1000)|0}K</text>`;
+    // panel title
+    s += `<text x="${x0+panelW/2}" y="${PT-12}" class="lbl-bold" text-anchor="middle" fill="${sh.col}">${sh.label}</text>`;
+  });
+  s += '</svg>';
+  document.getElementById('chart-cbam-trajectory').innerHTML = s;
+}
+
+// -------- 4. SLOPE CHART (water stress sim vs actual) --------
+function drawSlope(){
+  const W=720, H=380, PL=180, PR=180, PT=40, PB=50;
+  const iw = W-PL-PR;
+  const facs = [
+    {name:'HRF-001 Nashville',sim:1.30,act:1.12,nudge:-0.05},
+    {name:'HRF-002 Murfreesboro',sim:1.40,act:3.51,hi:true},
+    {name:'HRF-003 Bowling Green',sim:2.30,act:2.08},
+    {name:'HRF-004 Chattanooga',sim:0.90,act:0.31},
+    {name:'HRF-005 Nashville',sim:1.30,act:1.12,nudge:0.05},
+  ];
+  const min=0, max=4;
+  const sy = v => PT + (1-(v-min)/(max-min)) * (H-PT-PB);
+  let s = svg(W,H);
+  // column lines
+  s += `<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${H-PB}" class="axis-line"/>`;
+  s += `<line x1="${PL+iw}" y1="${PT}" x2="${PL+iw}" y2="${H-PB}" class="axis-line"/>`;
+  // column headers
+  s += `<text x="${PL}" y="${PT-15}" class="lbl-bold" text-anchor="middle">Simulated</text>`;
+  s += `<text x="${PL+iw}" y="${PT-15}" class="lbl-bold" text-anchor="middle">WRI Aqueduct (actual)</text>`;
+  // y reference labels
+  [0,1,2,3,4].forEach(v=>{
+    s += `<text x="${PL-iw*0.05}" y="${sy(v)+3}" class="axis" text-anchor="end" fill="${C.muted}">${v}</text>`;
+  });
+  // lines + dots
+  facs.forEach(f=>{
+    const col = f.hi ? C.accent : C.slate;
+    const w = f.hi ? 2.5 : 1.5;
+    const op = f.hi ? 0.95 : 0.55;
+    const ny = (f.nudge||0) * 18;
+    const ySim = sy(f.sim) + ny;
+    const yAct = sy(f.act) + ny;
+    s += `<line x1="${PL}" y1="${ySim}" x2="${PL+iw}" y2="${yAct}" stroke="${col}" stroke-width="${w}" stroke-opacity="${op}"/>`;
+    s += `<circle cx="${PL}" cy="${ySim}" r="${f.hi?5:4}" fill="${col}" fill-opacity="${op}"/>`;
+    s += `<circle cx="${PL+iw}" cy="${yAct}" r="${f.hi?5:4}" fill="${col}" fill-opacity="${op}"/>`;
+    // left label
+    s += `<text x="${PL-12}" y="${ySim+3}" class="${f.hi?'lbl-bold':'axis'}" text-anchor="end" fill="${f.hi?C.accent:C.ink2}">${f.name}</text>`;
+    s += `<text x="${PL-12}" y="${ySim+15}" class="axis" text-anchor="end" fill="${C.muted}">${f.sim.toFixed(2)}</text>`;
+    // right label
+    s += `<text x="${PL+iw+12}" y="${yAct+3}" class="${f.hi?'lbl-bold':'axis'}" fill="${f.hi?C.accent:C.ink2}">${f.act.toFixed(2)}${f.hi?' HIGH':''}</text>`;
+  });
+  // murfreesboro callout
+  const murf = facs[1];
+  s += `<text x="${PL+iw/2}" y="${sy(2.4)-5}" class="annot" fill="${C.accent}" text-anchor="middle" font-style="italic">+2.11 — the data correction</text>`;
+  s += `<text x="${PL+iw/2}" y="${sy(2.4)+10}" class="annot" fill="${C.accent}" text-anchor="middle" font-style="italic">that changed the plan</text>`;
+  s += '</svg>';
+  document.getElementById('chart-slope').innerHTML = s;
+}
+
+// -------- 5. TREEMAP (Scope 3 by portco) --------
+function drawTreemap(){
+  const W=820, H=380, PT=10, PB=10, PL=10, PR=10;
+  const iw = W-PL-PR, ih = H-PT-PB;
+  const data = [
+    {name:'Harvest Ridge',sector:'Food & Ag',mt:63840,col:'#7A4530'},
+    {name:'Sterling',sector:'Industrial',mt:47040,col:'#3D6E70'},
+    {name:'NovaCare',sector:'Healthcare',mt:33250,col:'#5C4258'},
+    {name:'Pinnacle',sector:'Industrial',mt:32200,col:'#4A6B3F'},
+    {name:'Clearview',sector:'Env. Svcs',mt:27300,col:'#3A5A4A'},
+    {name:'Patriot',sector:'Bus. Svcs',mt:26350,col:'#7A6535'},
+    {name:'Keystone',sector:'Healthcare',mt:26220,col:'#6F4F65'},
+    {name:'Meridian',sector:'Bus. Svcs',mt:19125,col:'#5A6240'},
+    {name:'Trident',sector:'Tech Svcs',mt:15620,col:'#3F5560'},
+    {name:'Ridgeline',sector:'Real Estate',mt:6175,col:'#6B5A3F'},
+  ];
+  // simple slice-and-dice treemap (vertical first slice, then horizontal)
+  const total = data.reduce((s,d)=>s+d.mt,0);
+  // first 3 in a left tall column, rest across right
+  let s = svg(W,H);
+  // top row: harvest ridge dominates left
+  const split1 = (data[0].mt + data[1].mt) / total;
+  const leftW = iw * split1;
+  // left half: harvest ridge + sterling stacked
+  const hrH = (data[0].mt / (data[0].mt+data[1].mt)) * ih;
+  function rect(x,y,w,h,d){
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${d.col}" fill-opacity="0.92" stroke="${C.paper}" stroke-width="2"/>`;
+    const fs = Math.min(22, Math.sqrt(w*h)/10);
+    if(w>50 && h>30){
+      s += `<text x="${x+10}" y="${y+18}" font-family="Inter" font-size="${Math.min(fs,17)}" font-weight="700" fill="${C.ink}" letter-spacing="-0.02em">${d.name}</text>`;
+      s += `<text x="${x+10}" y="${y+34}" class="axis" fill="${C.ink}" fill-opacity="0.75">${d.sector}</text>`;
+      s += `<text x="${x+10}" y="${y+h-10}" class="annot-num" fill="${C.ink}">${d.mt.toLocaleString()} mt</text>`;
+    }
+  }
+  rect(PL, PT, leftW, hrH, data[0]);
+  rect(PL, PT+hrH, leftW, ih-hrH, data[1]);
+  // right half: 8 portcos, two columns
+  const rightX = PL+leftW;
+  const rightW = iw - leftW;
+  const rightItems = data.slice(2);
+  const rightTotal = rightItems.reduce((s,d)=>s+d.mt,0);
+  // split rightItems into two columns by alternating
+  const colA = [], colB = [];
+  rightItems.forEach((d,i) => (i%2===0?colA:colB).push(d));
+  const colATotal = colA.reduce((s,d)=>s+d.mt,0);
+  const colW = rightW/2;
+  // col A
+  let yc = PT;
+  colA.forEach(d=>{
+    const h = (d.mt/colATotal) * ih;
+    rect(rightX, yc, colW, h, d);
+    yc += h;
+  });
+  const colBTotal = colB.reduce((s,d)=>s+d.mt,0);
+  yc = PT;
+  colB.forEach(d=>{
+    const h = (d.mt/colBTotal) * ih;
+    rect(rightX+colW, yc, colW, h, d);
+    yc += h;
+  });
+  s += '</svg>';
+  document.getElementById('chart-treemap').innerHTML = s;
+}
+
+// -------- 6. WATERFALL (Keystone exit EV) --------
+function drawWaterfall(){
+  const W=720, H=380, PL=60, PR=80, PT=30, PB=60;
+  const iw=W-PL-PR, ih=H-PT-PB;
+  const base = 242; // $M (10x EBITDA $24.2M)
+  const scenarios = [
+    {label:'No Screen',adj:0,prob:0.30},
+    {label:'Basic Screen',adj:-0.15,prob:0.30},
+    {label:'Moderate Screen',adj:-0.35,prob:0.25},
+    {label:'Strict Screen',adj:-0.60,prob:0.10},
+    {label:'ESG-First Buyer',adj:-1.00,prob:0.05},
+  ];
+  const ebitda = 24.2;
+  const contribs = scenarios.map(sc => sc.adj * ebitda * sc.prob);
+  const final = base + contribs.reduce((s,v)=>s+v,0); // ~ 236.1
+  const yMin=230, yMax=245;
+  const sy = v => PT + (1-(v-yMin)/(yMax-yMin)) * ih;
+  const bw = iw / (scenarios.length+2) * 0.8;
+  const xstep = iw / (scenarios.length+2);
+  let s = svg(W,H);
+  // y axis
+  s += `<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+ih}" class="axis-line"/>`;
+  [230,235,240,245].forEach(v=>{
+    s += `<text x="${PL-8}" y="${sy(v)+3}" class="axis" text-anchor="end">$${v}M</text>`;
+    s += `<line x1="${PL}" y1="${sy(v)}" x2="${PL+iw}" y2="${sy(v)}" class="grid"/>`;
+  });
+  // base bar
+  let cx = PL + xstep*0.5;
+  s += `<rect x="${cx-bw/2}" y="${sy(base)}" width="${bw}" height="${PT+ih-sy(base)}" fill="${C.slate}" fill-opacity="0.7" rx="1"/>`;
+  s += `<text x="${cx}" y="${sy(base)-8}" class="annot-num" text-anchor="middle">$${base}M</text>`;
+  s += `<text x="${cx}" y="${PT+ih+18}" class="axis" text-anchor="middle">Base 10×</text>`;
+  s += `<text x="${cx}" y="${PT+ih+34}" class="axis" text-anchor="middle" fill="${C.muted}">$24.2M EBITDA</text>`;
+  // running total for waterfall
+  let running = base;
+  scenarios.forEach((sc,i)=>{
+    cx = PL + xstep*(i+1.5);
+    const contrib = sc.adj * ebitda * sc.prob;
+    const newVal = running + contrib;
+    const yTop = sy(Math.max(running,newVal));
+    const yBot = sy(Math.min(running,newVal));
+    const col = contrib<0 ? C.accent : C.olive;
+    s += `<rect x="${cx-bw/2}" y="${yTop}" width="${bw}" height="${yBot-yTop}" fill="${col}" fill-opacity="0.75" rx="1"/>`;
+    // connector
+    if(i<scenarios.length-1){
+      const nextX = PL + xstep*(i+2.5);
+      s += `<line x1="${cx+bw/2}" y1="${sy(newVal)}" x2="${nextX-bw/2}" y2="${sy(newVal)}" stroke="${C.muted}" stroke-dasharray="2,2" stroke-width="1"/>`;
+    }
+    s += `<text x="${cx}" y="${yTop-6}" class="annot-num" text-anchor="middle" fill="${col}">${contrib>=0?'+':''}$${contrib.toFixed(2)}M</text>`;
+    s += `<text x="${cx}" y="${PT+ih+18}" class="axis" text-anchor="middle">${sc.label}</text>`;
+    s += `<text x="${cx}" y="${PT+ih+34}" class="axis" text-anchor="middle" fill="${C.muted}">${(sc.prob*100)|0}% · ${sc.adj}×</text>`;
+    running = newVal;
+  });
+  // final bar
+  cx = PL + xstep*(scenarios.length+1.5);
+  s += `<rect x="${cx-bw/2}" y="${sy(final)}" width="${bw}" height="${PT+ih-sy(final)}" fill="${C.accent2}" fill-opacity="0.85" rx="1"/>`;
+  s += `<text x="${cx}" y="${sy(final)-8}" class="annot-num" text-anchor="middle" font-weight="700" fill="${C.accent2}">$${final.toFixed(1)}M</text>`;
+  s += `<text x="${cx}" y="${PT+ih+18}" class="axis" text-anchor="middle" font-weight="700" fill="${C.ink}">Expected EV</text>`;
+  s += `<text x="${cx}" y="${PT+ih+34}" class="axis" text-anchor="middle" fill="${C.accent}">−$5.9M impact</text>`;
+  s += '</svg>';
+  document.getElementById('chart-waterfall').innerHTML = s;
+}
+
+// -------- 7. GANTT --------
+function drawGantt(){
+  const W=820, H=420, PL=240, PR=20, PT=40, PB=30;
+  const iw = W-PL-PR;
+  const quarters = ['Q2 26','Q3 26','Q4 26','Q1 27','Q2 27','Q3 27'];
+  const inits = [
+    {co:'Harvest Ridge',name:'Flood mitigation',start:0,dur:3,pri:'crit'},
+    {co:'Pinnacle T&I',name:'Climate resilience assessment',start:0,dur:1,pri:'med'},
+    {co:'Sterling',name:'Renewable energy PPA',start:1,dur:2,pri:'high'},
+    {co:'Harvest Ridge',name:'CIP water recycling (BG)',start:1,dur:4,pri:'crit'},
+    {co:'Harvest Ridge',name:'Murfreesboro water resilience',start:1,dur:3,pri:'high'},
+    {co:'Trident IT',name:'Cold-aisle containment',start:2,dur:2,pri:'med'},
+    {co:'Harvest Ridge',name:'Steam condensate recovery',start:2,dur:3,pri:'med'},
+    {co:'Sterling',name:'Process heat electrification',start:3,dur:3,pri:'high'},
+    {co:'Harvest Ridge',name:'Backup water supply (BG)',start:3,dur:3,pri:'high'},
+    {co:'Clearview',name:'Fleet electrification pilot',start:4,dur:2,pri:'med'},
+  ];
+  const PRI = {crit:[C.accent, '#3A1F1A'], high:[C.warn,'#3A2D1A'], med:[C.slate,'#1F2A33']};
+  const cw = iw / quarters.length;
+  const rh = (H-PT-PB) / inits.length;
+  let s = svg(W,H);
+  // quarter headers + gridlines
+  quarters.forEach((q,i)=>{
+    s += `<text x="${PL+cw*(i+0.5)}" y="${PT-10}" class="axis" text-anchor="middle" font-weight="600">${q}</text>`;
+    if(i>0) s += `<line x1="${PL+cw*i}" y1="${PT-2}" x2="${PL+cw*i}" y2="${H-PB+5}" class="grid"/>`;
+  });
+  s += `<line x1="${PL}" y1="${PT-2}" x2="${PL+iw}" y2="${PT-2}" class="axis-line"/>`;
+  s += `<line x1="${PL}" y1="${H-PB}" x2="${PL+iw}" y2="${H-PB}" class="axis-line"/>`;
+  // bars
+  inits.forEach((it,i)=>{
+    const y = PT + i*rh + rh*0.18;
+    const h = rh*0.64;
+    const x = PL + cw*it.start;
+    const w = cw*it.dur - 4;
+    const [stroke, fill] = PRI[it.pri];
+    s += `<rect x="${x+2}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="1.5" rx="2"/>`;
+    s += `<text x="${PL-12}" y="${y+h/2+4}" class="axis" text-anchor="end" fill="${C.ink2}"><tspan font-weight="600" fill="${C.ink}">${it.co}</tspan> ${it.name}</text>`;
+  });
+  // legend
+  s += `<g transform="translate(${PL},${H-8})">`;
+  ['crit','high','med'].forEach((p,i)=>{
+    const [stroke,fill] = PRI[p];
+    s += `<rect x="${i*100}" y="-8" width="14" height="10" fill="${fill}" stroke="${stroke}"/>`;
+    s += `<text x="${i*100+20}" y="0" class="axis">${p==='crit'?'Critical':p==='high'?'High':'Medium'}</text>`;
+  });
+  s += '</g>';
+  s += '</svg>';
+  document.getElementById('chart-gantt').innerHTML = s;
+}
+
+// -------- 8. BULLET CLUSTER (initiative capex vs NPV) --------
+function drawBullets(){
+  const inits = [
+    {co:'Harvest Ridge',name:'Flood mitigation',capex:380000,npv:396272},
+    {co:'Sterling',name:'Renewable energy PPA',capex:0,npv:271041},
+    {co:'Harvest Ridge',name:'CIP water recycling (BG)',capex:280000,npv:116137},
+    {co:'Harvest Ridge',name:'Murfreesboro resilience',capex:220000,npv:105250},
+    {co:'Trident IT',name:'Cold-aisle containment',capex:180000,npv:78532},
+    {co:'Harvest Ridge',name:'Steam condensate recovery',capex:165000,npv:51833},
+    {co:'Pinnacle T&I',name:'Climate resilience assessment',capex:75000,npv:50096},
+    {co:'Sterling',name:'Process heat electrification',capex:1200000,npv:-3249},
+    {co:'Harvest Ridge',name:'Backup water (BG)',capex:420000,npv:-136449},
+    {co:'Clearview',name:'Fleet electrification pilot',capex:350000,npv:-149846},
+  ];
+  inits.sort((a,b)=>b.npv-a.npv);
+  const W=820, H=480, PL=240, PMID=540, PR=20, PT=30, PB=40;
+  const capexMax = 1300000;
+  const npvMin = -200000, npvMax = 450000;
+  const capW = PMID-PL-30;
+  const npvW = W-PMID-PR;
+  const rh = (H-PT-PB)/inits.length;
+  let s = svg(W,H);
+  // headers
+  s += `<text x="${PL+capW/2}" y="${PT-12}" class="lbl-bold" text-anchor="middle">Capex ($K)</text>`;
+  s += `<text x="${PMID+npvW/2}" y="${PT-12}" class="lbl-bold" text-anchor="middle">NPV ($K)</text>`;
+  // baseline for capex
+  s += `<line x1="${PL}" y1="${PT-2}" x2="${PL}" y2="${H-PB}" class="axis-line"/>`;
+  // capex axis ticks
+  [0,500000,1000000].forEach(v=>{
+    const x = PL + (v/capexMax)*capW;
+    s += `<line x1="${x}" y1="${PT-2}" x2="${x}" y2="${H-PB}" class="grid"/>`;
+    s += `<text x="${x}" y="${H-PB+15}" class="axis" text-anchor="middle">${v===0?'0':'$'+(v/1000)+'K'}</text>`;
+  });
+  // npv zero line
+  const zx = PMID + (-npvMin/(npvMax-npvMin))*npvW;
+  s += `<line x1="${zx}" y1="${PT-2}" x2="${zx}" y2="${H-PB}" stroke="${C.ink}" stroke-width="1.5"/>`;
+  [-100000,0,200000,400000].forEach(v=>{
+    const x = PMID + ((v-npvMin)/(npvMax-npvMin))*npvW;
+    if(v!==0) s += `<line x1="${x}" y1="${PT-2}" x2="${x}" y2="${H-PB}" class="grid"/>`;
+    s += `<text x="${x}" y="${H-PB+15}" class="axis" text-anchor="middle">${v>0?'+':''}${v===0?'0':'$'+(v/1000)+'K'}</text>`;
+  });
+  // bars
+  inits.forEach((it,i)=>{
+    const y = PT + i*rh + rh*0.2;
+    const h = rh*0.6;
+    // label
+    s += `<text x="${PL-12}" y="${y+h/2+4}" class="axis" text-anchor="end"><tspan font-weight="600" fill="${C.ink}">${it.co}</tspan> ${it.name}</text>`;
+    // capex bar
+    const capw = (it.capex/capexMax)*capW;
+    s += `<rect x="${PL}" y="${y}" width="${capw}" height="${h}" fill="${C.slate}" fill-opacity="0.5" rx="1"/>`;
+    if(it.capex>0) s += `<text x="${PL+capw+5}" y="${y+h/2+4}" class="annot-num" fill="${C.muted}">$${(it.capex/1000)|0}K</text>`;
+    // npv marker
+    const nx = PMID + ((it.npv-npvMin)/(npvMax-npvMin))*npvW;
+    const col = it.npv>=0 ? C.green : C.red;
+    if(it.npv>=0){
+      s += `<rect x="${zx}" y="${y+h*0.3}" width="${nx-zx}" height="${h*0.4}" fill="${col}" fill-opacity="0.55" rx="1"/>`;
+    } else {
+      s += `<rect x="${nx}" y="${y+h*0.3}" width="${zx-nx}" height="${h*0.4}" fill="${col}" fill-opacity="0.55" rx="1"/>`;
+    }
+    s += `<circle cx="${nx}" cy="${y+h/2}" r="5" fill="${col}" stroke="${C.paper}" stroke-width="2"/>`;
+    const npvLab = (it.npv>=0?'+$':'−$') + Math.abs(it.npv/1000).toFixed(0) + 'K';
+    const labX = it.npv>=0 ? nx+10 : nx-10;
+    const labA = it.npv>=0 ? 'start' : 'end';
+    s += `<text x="${labX}" y="${y+h/2+4}" class="annot-num" fill="${col}" text-anchor="${labA}" font-weight="700">${npvLab}</text>`;
+  });
+  s += '</svg>';
+  document.getElementById('chart-bullets').innerHTML = s;
+}
+
+// -------- 9. EVOLUTION (Murfreesboro across versions) --------
+function drawEvolution(){
+  const W=720, H=280, PL=80, PR=120, PT=30, PB=50;
+  const iw=W-PL-PR, ih=H-PT-PB;
+  const versions = [
+    {v:'v1',val:1.4,real:false},
+    {v:'v2',val:1.4,real:false},
+    {v:'v3',val:1.4,real:false},
+    {v:'v4',val:3.51,real:true},
+  ];
+  const yMax=4, yMin=0;
+  const sx = i => PL + (i/(versions.length-1))*iw;
+  const sy = v => PT + (1-(v-yMin)/(yMax-yMin))*ih;
+  let s = svg(W,H);
+  // y axis
+  s += `<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+ih}" class="axis-line"/>`;
+  [0,1,2,3,4].forEach(v=>{
+    s += `<text x="${PL-8}" y="${sy(v)+3}" class="axis" text-anchor="end">${v}</text>`;
+    s += `<line x1="${PL}" y1="${sy(v)}" x2="${PL+iw}" y2="${sy(v)}" class="grid"/>`;
+  });
+  // threshold zones
+  s += `<rect x="${PL}" y="${sy(3)}" width="${iw}" height="${sy(0)-sy(3)+(PT+ih-sy(0))*0}" fill="${C.accent}" fill-opacity="0"/>`;
+  s += `<text x="${PL+iw+10}" y="${sy(3.5)+4}" class="axis" fill="${C.red}" font-weight="600">High</text>`;
+  s += `<text x="${PL+iw+10}" y="${sy(2.3)+4}" class="axis" fill="${C.warn}" font-weight="600">Med-High</text>`;
+  s += `<text x="${PL+iw+10}" y="${sy(1.3)+4}" class="axis" fill="${C.olive}" font-weight="600">Low-Med</text>`;
+  // line
+  let path = '';
+  versions.forEach((d,i)=>{ path += (i===0?'M':'L')+sx(i)+','+sy(d.val); });
+  s += `<path d="${path}" fill="none" stroke="${C.muted}" stroke-width="2" stroke-dasharray="4,3"/>`;
+  // dots
+  versions.forEach((d,i)=>{
+    const col = d.real ? C.accent : C.muted;
+    s += `<circle cx="${sx(i)}" cy="${sy(d.val)}" r="${d.real?7:5}" fill="${col}" stroke="${C.paper}" stroke-width="2"/>`;
+    s += `<text x="${sx(i)}" y="${PT+ih+20}" class="lbl-bold" text-anchor="middle" fill="${d.real?C.accent:C.ink2}">${d.v}</text>`;
+    s += `<text x="${sx(i)}" y="${sy(d.val)-12}" class="annot-num" text-anchor="middle" fill="${col}">${d.val}</text>`;
+    if(d.real){
+      s += `<text x="${sx(i)}" y="${PT+ih+36}" class="axis" text-anchor="middle" fill="${C.accent}" font-style="italic">WRI Aqueduct</text>`;
+    } else {
+      s += `<text x="${sx(i)}" y="${PT+ih+36}" class="axis" text-anchor="middle" fill="${C.muted}">simulated</text>`;
+    }
+  });
+  // jump annotation
+  s += `<path d="M${sx(2)+8},${sy(1.4)-8} Q${sx(2.5)},${sy(2.5)-30} ${sx(3)-12},${sy(3.51)-8}" fill="none" stroke="${C.accent}" stroke-width="1.5" stroke-dasharray="3,3"/>`;
+  s += `<text x="${sx(2.5)}" y="${sy(2.5)-40}" class="annot" fill="${C.accent}" text-anchor="middle">+2.11 in one API call</text>`;
+  s += '</svg>';
+  document.getElementById('chart-evolution').innerHTML = s;
+}
+
+// -------- INIT --------
+window.addEventListener('DOMContentLoaded', ()=>{
+  drawMatrix();
+  drawTornado();
+  drawCbamTraj();
+  drawSlope();
+  drawTreemap();
+  drawWaterfall();
+  drawGantt();
+  drawBullets();
+  drawEvolution();
+  updateChrome();
+});
+</script>
+</body>
+</html>
